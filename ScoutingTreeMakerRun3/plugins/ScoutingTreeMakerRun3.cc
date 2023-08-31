@@ -392,6 +392,7 @@ void ScoutingTreeMakerRun3::beginJob() {
     tree->Branch("Lxy"                 , &Lxy                         , "Lxy/F"     );
     tree->Branch("LxyErr"              , &LxyErr                      , "LxyErr/F"  );
     tree->Branch("LxySig"              , &LxySig                      , "LxySig/F"  );
+    tree->Branch("ndvtx"               , &ndvtx                       , "ndvtx/I" );
 
     tree->Branch("vtxXError"           , &vtxXError                   , "vtxXError/F");
     tree->Branch("vtxYError"           , &vtxYError                   , "vtxYError/F");

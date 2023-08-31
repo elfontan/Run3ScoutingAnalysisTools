@@ -58,6 +58,7 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h" 
 
 #include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/Photon.h"
 //
 // class declaration
 //
@@ -109,8 +110,9 @@ private:
   std::vector<bool>            l1Result_mon_;
   
   TTree* tree;
-  //Defining offline variables
+  int   nOfflineMuons;
   int   nScoutingMuons;
+  //Defining offline variables
   float pt1, pt2;
   float eta1, eta2;
   float phi1, phi2;
@@ -124,7 +126,6 @@ private:
   float ptmm;
   float drmm;
   //Defining scouting variables: muons
-  int   nOfflineMuons;
   float pt1_scout, pt2_scout;
   float mass_scout;
   float ptmm_scout;
@@ -165,8 +166,8 @@ ScoutingTreeMakerRun3Monitor::ScoutingTreeMakerRun3Monitor(const edm::ParameterS
   muonsToken               (consumes<std::vector<Run3ScoutingMuon> >         (iConfig.getParameter<edm::InputTag>("muons"))),
   offlineMuonsToken        (consumes<std::vector<pat::Muon> >                (iConfig.getUntrackedParameter<edm::InputTag>("offlineMuons"))),
   electronsToken           (consumes<std::vector<Run3ScoutingElectron> >     (iConfig.getParameter<edm::InputTag>("electrons"))),
-  primaryVerticesToken     (consumes<std::vector<Run3ScoutingVertex> >           (iConfig.getParameter<edm::InputTag>("primaryVertices"))),
-  verticesToken            (consumes<std::vector<Run3ScoutingVertex> >           (iConfig.getParameter<edm::InputTag>("displacedVertices"))),
+  primaryVerticesToken     (consumes<std::vector<Run3ScoutingVertex> >       (iConfig.getParameter<edm::InputTag>("primaryVertices"))),
+  verticesToken            (consumes<std::vector<Run3ScoutingVertex> >       (iConfig.getParameter<edm::InputTag>("displacedVertices"))),
   rhoToken                 (consumes<double>                                 (iConfig.getParameter<edm::InputTag>("rho"))), 
   photonsToken             (consumes<std::vector<Run3ScoutingPhoton> >       (iConfig.getParameter<edm::InputTag>("photons"))),
   pfcandsToken             (consumes<std::vector<Run3ScoutingParticle> >     (iConfig.getParameter<edm::InputTag>("pfcands"))),
@@ -202,8 +203,8 @@ void ScoutingTreeMakerRun3Monitor::analyze(const edm::Event& iEvent, const edm::
   using namespace edm;
   using namespace std;
   using namespace reco;
-
-
+  
+ 
   // ------------- //
   // OFFLINE MUONS //
   // ------------- //
@@ -219,13 +220,13 @@ void ScoutingTreeMakerRun3Monitor::analyze(const edm::Event& iEvent, const edm::
   // Minimal selection on the offline muons
   // --------------------------------------
   for (auto muons_iter = offlineMuonsH->begin(); muons_iter != offlineMuonsH->end(); ++muons_iter) {
-    if (muons_iter->pt()>3 &&  abs(muons_iter->eta())<1.9) { //removing the MediumMuon ID requirement, saved later
+    if (muons_iter->pt() > 3 && abs(muons_iter->eta()) < 2.4) { //removing the MediumMuon ID requirement, saved later
       nOfflineMuons+=1;
       idx.push_back(j);
     }
     j+=1;
   }
-  
+
   // Requiring exactly two offline muons in the event
   // ------------------------------------------------
   if (!(idx.size()==2)) {/*cout<<"failed offline muons"<<endl;*/ return;}
@@ -287,7 +288,6 @@ void ScoutingTreeMakerRun3Monitor::analyze(const edm::Event& iEvent, const edm::
   // -------------- //
   // SCOUTING MUONS //
   // -------------- //
-
   Handle<vector<Run3ScoutingMuon> > muonsH;
   iEvent.getByToken(muonsToken, muonsH);
   nScoutingMuons=0;
@@ -409,6 +409,8 @@ void ScoutingTreeMakerRun3Monitor::analyze(const edm::Event& iEvent, const edm::
   // Saving Muon ID info for various WP:
   // 0 isLooseMuon, 1 isMediumMuon, 2 isTightMuon
   // --------------------------------------------
+  mu1_ID.clear();  
+  mu2_ID.clear();  
   mu1_ID.push_back(offlineMuonsH->at(idx[0]).isLooseMuon());
   mu1_ID.push_back(offlineMuonsH->at(idx[0]).isMediumMuon());
   mu2_ID.push_back(offlineMuonsH->at(idx[1]).isLooseMuon());
@@ -518,8 +520,9 @@ void ScoutingTreeMakerRun3Monitor::analyze(const edm::Event& iEvent, const edm::
   cout<<"Scouting DIMUON dR = " << drmm_scout << endl;
   cout<<"################################################################"<<endl;
   */
-  tree->Fill();
 
+  cout << "---------------------------------------------------------------FILLING TREE!" << endl;
+  tree->Fill();
 }
 
 // ------------ method called once each job just before starting event loop  ------------
@@ -538,14 +541,14 @@ void ScoutingTreeMakerRun3Monitor::beginJob() {
     tree->Branch("rho"                 , &rho                          , "rho/F");
     tree->Branch("pfIso1"              , &pfIso1                       , "pfIso1/F");
     tree->Branch("pfIso2"              , &pfIso2                       , "pfIso2/F");
-    tree->Branch("mu1_ID", "std::vector<bool>"                         , &mu1_ID, 32000, 0);
-    tree->Branch("mu2_ID", "std::vector<bool>"                         , &mu2_ID, 32000, 0);
-    tree->Branch("l1Result", "std::vector<bool>"                       , &l1Result_, 32000, 0);
-    tree->Branch("l1Result_mon", "std::vector<bool>"                   , &l1Result_mon_, 32000, 0);
+    tree->Branch("mu1_ID"              , "std::vector<bool>"           , &mu1_ID, 32000, 0);
+    tree->Branch("mu2_ID"              , "std::vector<bool>"           , &mu2_ID, 32000, 0);
+    tree->Branch("l1Result"            , "std::vector<bool>"           , &l1Result_, 32000, 0);
+    tree->Branch("l1Result_mon"        , "std::vector<bool>"           , &l1Result_mon_, 32000, 0);
     tree->Branch("nOfflineMuons"       , &nOfflineMuons                , "nOfflineMuons/I");
     tree->Branch("nScoutingMuons"      , &nScoutingMuons               , "nScoutingMuons/I");
     tree->Branch("nvtx"                , &nvtx                         , "nvtx/I");
-    tree->Branch("ndvtx"                , &ndvtx                         , "ndvtx/I");
+    tree->Branch("ndvtx"               , &ndvtx                        , "ndvtx/I");
     tree->Branch("pt1_scout"           , &pt1_scout                    , "pt1_scout/F");                                    
     tree->Branch("pt2_scout"           , &pt2_scout                    , "pt2_scout/F");                                      
     tree->Branch("mass_scout"          , &mass_scout                   , "mass_scout/F");                                          

@@ -44,11 +44,11 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, '124X_dataRun3_Prompt_v4', '')
 
-L1Seeds = ["L1_DoubleMu_12_5","L1_DoubleMu_15_7","L1_DoubleMu4p5er2p0_SQ_OS_Mass_Min7","L1_DoubleMu4p5er2p0_SQ_OS_Mass_7to18","L1_DoubleMu4_SQ_OS_dR_Max1p2","L1_DoubleMu4p5_SQ_OS_dR_Max1p2"]
+L1Seeds = ["L1_DoubleMu_12_5", "L1_DoubleMu_15_7", "L1_DoubleMu4p5er2p0_SQ_OS_Mass_Min7", "L1_DoubleMu4p5er2p0_SQ_OS_Mass_7to18", "L1_DoubleMu4_SQ_OS_dR_Max1p2", "L1_DoubleMu4p5_SQ_OS_dR_Max1p2", "L1_SingleLooseIsoEG28er2p1", "L1_SingleLooseIsoEG28er1p5", "L1_SingleLooseIsoEG30er1p5", "L1_SingleIsoEG30er2p1", "L1_SingleIsoEG32er2p1", "L1_DoubleEG_LooseIso16_LooseIso12_er1p5", "L1_DoubleEG_LooseIso18_LooseIso12_er1p5", "L1_DoubleEG_LooseIso20_LooseIso12_er1p5", "L1_DoubleEG_LooseIso22_LooseIso12_er1p5", "L1_SingleJet180", "L1_SingleJet200", "L1_DoubleJet30er2p5_Mass_Min300_dEta_Max1p5", "L1_DoubleJet30er2p5_Mass_Min330_dEta_Max1p5", "L1_DoubleJet30er2p5_Mass_Min360_dEta_Max1p5", "L1_HTT280er", "L1_HTT320er", "L1_HTT360er", "L1_ETT2000"]
 
 L1MonitorSeeds = ["L1_HTT200er","L1_HTT255er","L1_HTT280er","L1_HTT320er","L1_HTT360er","L1_HTT400er","L1_HTT450er","L1_ETT2000","L1_SingleJet180","L1_SingleJet200","L1_DoubleJet30er2p5_Mass_Min300_dEta_Max1p5","L1_DoubleJet30er2p5_Mass_Min330_dEta_Max1p5","L1_DoubleJet30er2p5_Mass_Min360_dEta_Max1p5","L1_SingleLooseIsoEG28er2p1","L1_SingleLooseIsoEG28er1p5","L1_SingleLooseIsoEG30er1p5","L1_SingleIsoEG28er2p1","L1_SingleIsoEG30er2p1","L1_SingleIsoEG32er2p1","L1_DoubleEG_LooseIso16_LooseIso12_er1p5","L1_DoubleEG_LooseIso18_LooseIso12_er1p5","L1_DoubleEG_LooseIso20_LooseIso12_er1p5","L1_DoubleEG_LooseIso22_LooseIso12_er1p5"]
 
-process.scoutingTree = cms.EDAnalyzer('ScoutingTreeMakerRun3Monitor',
+process.scoutingTree = cms.EDAnalyzer('ScoutingPackedCandPhotonTreeMakerRun3Monitor',
                                       triggerresults   = cms.InputTag("TriggerResults", "", "HLT"),
                                       ReadPrescalesFromFile = cms.bool( False ),
                                       AlgInputTag       = cms.InputTag("gtStage2Digis"),
@@ -56,19 +56,21 @@ process.scoutingTree = cms.EDAnalyzer('ScoutingTreeMakerRun3Monitor',
                                       l1tExtBlkInputTag = cms.InputTag("gtStage2Digis"),
                                       doL1 = cms.bool( True ),
                                       l1Seeds           = cms.vstring(L1Seeds),
-                                      l1MonitorSeeds           = cms.vstring(L1MonitorSeeds),
-                                      muons            = cms.InputTag("hltScoutingMuonPacker","","HLT"),
-                                      offlineMuons            = cms.untracked.InputTag("slimmedMuons"),
-                                      electrons        = cms.InputTag("hltScoutingEgammaPacker"),
-                                      photons          = cms.InputTag("hltScoutingEgammaPacker"),
-                                      pfcands          = cms.InputTag("hltScoutingPFPacker"),
-                                      pfjets           = cms.InputTag("hltScoutingPFPacker"),
-                                      tracks           = cms.InputTag("hltScoutingTrackPacker"),
-                                      primaryVertices  = cms.InputTag("hltScoutingPrimaryVertexPacker","primaryVtx"),
-                                      displacedVertices  = cms.InputTag("hltScoutingMuonPacker","displacedVtx"),
-                                      pfMet            = cms.InputTag("hltScoutingPFPacker","pfMetPt"),
-                                      pfMetPhi         = cms.InputTag("hltScoutingPFPacker","pfMetPhi"),
-                                      rho         = cms.InputTag("hltScoutingPFPacker","rho"),
+                                      l1MonitorSeeds    = cms.vstring(L1MonitorSeeds),
+                                      muons             = cms.InputTag("hltScoutingMuonPacker","","HLT"),
+                                      offlineMuons      = cms.untracked.InputTag("slimmedMuons"),
+                                      electrons         = cms.InputTag("hltScoutingEgammaPacker"),
+                                      offlinePhotons    = cms.untracked.InputTag("slimmedPhotons"),
+                                      pfLabel           = cms.untracked.InputTag("packedPFCandidates"),
+                                      photons           = cms.InputTag("hltScoutingEgammaPacker"),
+                                      pfcands           = cms.InputTag("hltScoutingPFPacker"),
+                                      pfjets            = cms.InputTag("hltScoutingPFPacker"),
+                                      tracks            = cms.InputTag("hltScoutingTrackPacker"),
+                                      primaryVertices   = cms.InputTag("hltScoutingPrimaryVertexPacker","primaryVtx"),
+                                      displacedVertices = cms.InputTag("hltScoutingMuonPacker","displacedVtx"),
+                                      pfMet             = cms.InputTag("hltScoutingPFPacker","pfMetPt"),
+                                      pfMetPhi          = cms.InputTag("hltScoutingPFPacker","pfMetPhi"),
+                                      rho               = cms.InputTag("hltScoutingPFPacker","rho"),
                                   )
 
 process.p = cms.Path(process.gtStage2Digis+process.scoutingTree)
