@@ -1,6 +1,5 @@
 import FWCore.ParameterSet.Config as cms
 
-#process = cms.Process("HLT")
 process = cms.Process("SKIM")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -16,7 +15,8 @@ process.maxEvents = cms.untracked.PSet(
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-"file:/eos/user/j/jfriesen/QCD_EtaMuMuGamma_TuneCP5_13p6TeV-pythia8_Run3Summer22EE_MiniAODv3/MiniAODv3_1.root",
+        #"file:/eos/user/j/jfriesen/QCD_EtaMuMuGamma_TuneCP5_13p6TeV-pythia8_Run3Summer22EE_MiniAODv3/MiniAODv3_1.root",
+        "root://cmseos.fnal.gov//store/user/bgreenbe/EtaToMuMuGamma/Run3_2022_MINIAOD_3/EtaToMuMuGamma_2022Test_MINIAOD_987.root",
  )
 )
 
@@ -32,8 +32,7 @@ process.source = cms.Source("PoolSource",
 #process.gtStage2Digis.InputLabel = cms.InputTag( "AlgoBlkInputTag" )
 
 process.TFileService = cms.Service("TFileService", 
-    fileName = cms.string("PROVA_peaks.root")
-    #fileName = cms.string("pfCand_test_etaRun3MCminiaod.root")
+    fileName = cms.string("GEN_EtaMuMuGamma.root")
 )
 
 #process.ScoutingFilterPath = cms.Path(process.scoutingFilter)
@@ -72,5 +71,3 @@ process.standardTree = cms.EDAnalyzer('gen_standardRecoTreeMakerRun3',
                                   )
 
 process.p = cms.Path(process.standardTree)
-#process.p = cms.Path(process.gtStage2Digis+process.scoutingTree)
-#process.p = cms.Path(process.hltGtStage2Digis+process.scoutingTree)
