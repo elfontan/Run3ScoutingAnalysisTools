@@ -2,13 +2,13 @@
 ### Repository for run3 scouting analysis tools
 
 #### Setup
-Setup a CMSSW working area and clone the `Run3ScoutingAnalysisTools` repo in the specific branch `ScoutingPaper`:
+Setup a CMSSW working area and clone the `Run3ScoutingAnalysisTools` repo in the specific branch `EtaMuMuGamma`:
 ```
 cmsrel CMSSW_13_0_6
 cd CMSSW_13_0_6/src
 cmsenv
 git cms-init
-git clone git@github.com:elfontan/Run3ScoutingAnalysisTools.git -b ScoutingPaper
+git clone https://github.com/elfontan/Run3ScoutingAnalysisTools.git -b EtaMuMuGamma
 scram b -j 8
 ```
 
